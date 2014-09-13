@@ -84,14 +84,25 @@ in and print out security descriptors in SDDL format.
 Various algorithms are described to allow validating access to objects 
 protected with a security descritor. The primary function is access-check.
 
-At present the algorithm functionality is not complete.
+At present the algorithm functionality is not complete (i.e. they don't work).
+
 
 5. Notes
 ---------
 
-This was written as a largely educational exercise (to understand the Windows
-security model) but its possible the functionality could be useful 
-at some point in the future.
+This package was written as a largely educational exercise, to understand
+the Windows security model, but its possible the functionality could be more
+generally useful at some point in the future. 
+
+6. Examples
+------------
+
+```
+;; parse a SID string into a SID object
+(string-sid "S-1-2-3")
+-> #<SID S-1-2-3>
+
+;; 
 
 
 Frank James 

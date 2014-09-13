@@ -140,10 +140,10 @@
   "Get the ace-type (keyword) from an ACE instance."
   (first (find (type-of ace) *sddl-ace-type-names* :key #'second)))
 (defun ace-type-name (ace)
-  (warn "This funciton is deprecated - use ACE-TYPE instead")
+;;  (warn "This funciton is deprecated - use ACE-TYPE instead")
   (ace-type ace))
 (defun ace-type-name-kw (ace)
-  (warn "This funciton is deprecated - use ACE-TYPE instead")
+;;  (warn "This funciton is deprecated - use ACE-TYPE instead")
   (ace-type ace))
 
 

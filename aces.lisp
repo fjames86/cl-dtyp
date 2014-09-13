@@ -510,7 +510,11 @@ For child objects that are containers, the ACE is inherited as an inherit-only A
   (when (symbolp sid)
     (setf sid (wellknown-sid sid)))
   (apply #'make-instance 
-	 (second (find ace-type *ace-type-names* :key #'car))
+	 (second (let ((ace-class-name (find ace-type *ace-type-names* :key #'car)))
+			   (if ace-class-name
+				   ace-class-name
+				   (error "Invalid ACE type ~S. Wanted one of ~S"
+						  ace-type (mapcar #'car *ace-type-names*)))))
 	 :header (make-instance 'ace-header :flags ace-flags)
 	 :access-mask mask
 	 :sid sid
