@@ -67,7 +67,7 @@ same original expression.
 A security descriptor contains 2 sids (the owner and group) and 2 ACLs,
 the Discretionary ACL (DACL) and System ACL (SACL). The DACL is used to determine
 access to the object, whereas the SACL is used for advanced system purposes 
-(such as auditing accesses to the object). The SACL can normally be ignored.
+(such as auditing accesses to the object). The SACL can typically be ignored.
 
 
 3.1 SDDL
@@ -76,7 +76,9 @@ access to the object, whereas the SACL is used for advanced system purposes
 Security descriptors can be encoded in a string representation using 
 Security Descriptor Description Language (SDDL). With the exception of 
 conditional expressions, an SDDL parser has been implemented to read 
-in and print out security descriptors in SDDL format. 
+in and print out security descriptors in SDDL format.
+
+[ Note: reading of SDDL conditional expressions is not implemented ]
 
 4. Algorithms 
 -------------
@@ -84,26 +86,48 @@ in and print out security descriptors in SDDL format.
 Various algorithms are described to allow validating access to objects 
 protected with a security descritor. The primary function is access-check.
 
-At present the algorithm functionality is not complete (i.e. they don't work).
+At present the algorithm functionality is not complete (i.e. they don't work). This is mainly because the algorithm descriptions in the MS-DTYP documentation are not clear.
 
 
 5. Notes
 ---------
 
 This package was written as a largely educational exercise, to understand
-the Windows security model, but its possible the functionality could be more
+the Windows security model, but it's possible the functionality could be more
 generally useful at some point in the future. 
+
+Documentation is poor so I should write it down before I forget what it all does. Also the algorithms section is incomplete (and unlikely to be finished in the near-future). Also there are probably bugs galore.
+
 
 6. Examples
 ------------
 
 ```
 ;; parse a SID string into a SID object
-(string-sid "S-1-2-3")
--> #<SID S-1-2-3>
+CL-DTYP> (string-sid "S-1-2-3")
+#<SID S-1-2-3>
 
-;; 
+;; get a wellknown sid
+CL-DTYP> (wellknown-sid :everyone)
+#<SID S-1-1-0>
 
+;; pack/unpack an ACE
+CL-DTYP> (pack-ace :access-allowed nil nil :everyone)
+#(0 0 20 0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0 0)
+CL-DTYP> (unpack-ace (pack-ace :access-allowed nil nil :everyone))
+#<ACCESS-ALLOWED-ACE A;;;;;WD>
+
+;; security descriptor
+CL-DTYP> (make-security-descriptor nil :builtin-administrators :everyone nil (list (make-ace :access-allowed nil nil :everyone)))
+#<SECURITY-DESCRIPTOR O:BA;G:WD;D:(A;;;;;WD);S:>
+
+;; conditional aces
+CL-DTYP> (pack-ace :access-allowed-callback nil nil :everyone :conditional-expression '(:not (:local "frank")))
+#(9 0 22 0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0 0 97 114 116 120 248 10 0 0 0 102 0
+  114 0 97 0 110 0 107 0 162)
+CL-DTYP> (unpack-ace (pack-ace :access-allowed-callback nil nil :everyone :conditional-expression '(:not (:local "frank"))))
+#<ACCESS-ALLOWED-CALLBACK-ACE XA;;;;;WD;(! @Local.frank )>
+```
 
 Frank James 
 August 2014.
